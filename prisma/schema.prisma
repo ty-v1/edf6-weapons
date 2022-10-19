@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 enum RangerWeaponCategory {
@@ -23,21 +23,23 @@ enum RangerWeaponCategory {
 }
 
 model Weapon {
-  id Int @id @default(autoincrement())
-  name String @db.VarChar(256)
-  level Int
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(256)
+  level        Int
+  RangerWeapon RangerWeapon?
+  Drop         Drop[]
 }
 
 model RangerWeapon {
-  weaponId Int @id
-  weapon Weapon @relation(fields: [weaponId], references: [id])
+  weaponId Int                  @id
+  weapon   Weapon               @relation(fields: [weaponId], references: [id])
   category RangerWeaponCategory
 }
 
 model Drop {
-  id Int @default(autoincrement()) @id
-  mission Int
-  weaponId Int @id
-  weapon Weapon @relation(fields: [weaponId], references: [id])
-  isNew Boolean
+  id       Int     @id @default(autoincrement())
+  mission  Int
+  weaponId Int
+  weapon   Weapon  @relation(fields: [weaponId], references: [id])
+  isNew    Boolean
 }

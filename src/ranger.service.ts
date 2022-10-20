@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
+import { WeaponCategory } from '@prisma/client';
 
 @Injectable()
 export class RangerService {
@@ -7,20 +8,13 @@ export class RangerService {
   }
 
   async searchWeapons(name: string) {
-    return (await this.prisma.rangerWeapon.findMany({
-      include: {
-        weapon: true,
-      },
+    return (await this.prisma.weapon.findMany({
       where: {
-        weapon: {
-          name: {
-            contains: this.normalizeName(name),
-          },
+        name: {
+          contains: this.normalizeName(name),
         },
+        category: WeaponCategory.RANGER,
       },
-    })).map(({ weapon, category }) => ({
-      ...weapon,
-      category,
     }));
   }
 
@@ -29,6 +23,11 @@ export class RangerService {
       return await this.prisma.drop.findMany({
         include: {
           weapon: true,
+        },
+        where: {
+          weapon: {
+            category: WeaponCategory.RANGER,
+          },
         },
         orderBy: {
           mission: 'desc',
@@ -42,6 +41,9 @@ export class RangerService {
       },
       where: {
         weaponId,
+        weapon: {
+          category: WeaponCategory.RANGER,
+        },
       },
       orderBy: {
         mission: 'desc',

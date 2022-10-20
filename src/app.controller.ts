@@ -1,12 +1,24 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query, Render } from '@nestjs/common';
 import { AppService } from './app.service';
+import { RangerService } from './ranger.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService, private readonly rangerService: RangerService) {
+  }
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Render('index')
+  index() {
+    return {
+      message: 'Hello world!',
+    };
+  }
+
+  @Get('/suggest')
+  async suggestWeapon(@Query('name') name: string) {
+    return {
+      message: await this.rangerService.searchWeapons(name),
+    };
   }
 }

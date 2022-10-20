@@ -10,30 +10,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum RangerWeaponCategory {
-  ASSULT_RIFLE
-  SHOTGUN
-  SNIPER_RIFLE
-  ROCKET_LAUNCHER
-  MISSILE_LAUNCHER
-  GRENADE_LAUNCHER
-  SPECIAL
-  BACKPACK
-  VIECHLE
+enum WeaponCategory {
+  RANGER
+  WING_DIVER
+  AIR_RAIDER
+  FENCER
 }
 
 model Weapon {
-  id           Int            @id @default(autoincrement())
-  name         String         @db.VarChar(256)
-  level        Int
-  RangerWeapon RangerWeapon?
-  Drop         Drop[]
-}
-
-model RangerWeapon {
-  weaponId Int                  @id
-  weapon   Weapon               @relation(fields: [weaponId], references: [id])
-  category RangerWeaponCategory
+  id       Int            @id @default(autoincrement())
+  name     String         @db.VarChar(256)
+  level    Int
+  category WeaponCategory
+  Drop     Drop[]
 }
 
 model Drop {

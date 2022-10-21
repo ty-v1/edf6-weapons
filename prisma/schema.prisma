@@ -19,7 +19,7 @@ enum WeaponCategory {
 
 model Weapon {
   id       Int            @id @default(autoincrement())
-  name     String         @db.VarChar(256)
+  name     String         @unique @db.VarChar(256)
   level    Int
   category WeaponCategory
   Drop     Drop[]

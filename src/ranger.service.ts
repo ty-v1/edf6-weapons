@@ -1,10 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { WeaponCategory } from '@prisma/client';
+import { CreateDropDto } from './create-drop.dto';
+import { isNil } from '@nestjs/common/utils/shared.utils';
 
 @Injectable()
 export class RangerService {
   constructor(private prisma: PrismaService) {
+  }
+
+  async findAllWeapons() {
+    return (await this.prisma.weapon.findMany({
+      where: {
+        category: WeaponCategory.RANGER,
+      },
+      orderBy: {
+        name: 'desc',
+      },
+    }));
   }
 
   async findAllDrops() {
@@ -54,6 +67,40 @@ export class RangerService {
       mission: e.mission,
       weaponName: `Lv${e.weapon.level} ${e.weapon.name}`,
       isNew: e.isNew,
+    }));
+  }
+
+  async register(dto: CreateDropDto): Promise<true | string> {
+
+    const oldestDrop = await this.findOldestDrop(dto.weaponId);
+
+    if (dto.isNew && !isNil(oldestDrop)) {
+      return `M${oldestDrop.mission}でドロップ済み`;
+    }
+
+    if (!dto.isNew && isNil(oldestDrop)) {
+      return `一度もドロップしていない`;
+    }
+
+    if (!dto.isNew && oldestDrop.mission <= dto.mission) {
+      return `M${oldestDrop.mission}でドロップ済み`;
+    }
+
+    await this.prisma.drop.create({
+      data: {
+        ...dto,
+      },
+    });
+
+    return true;
+  }
+
+  private async findOldestDrop(weaponId: number) {
+    return (await this.prisma.drop.findFirst({
+      where: {
+        weaponId,
+        isNew: true,
+      },
     }));
   }
 

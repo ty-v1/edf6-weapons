@@ -9,16 +9,16 @@ export class AppController {
 
   @Get()
   @Render('index')
-  index() {
-    return {
-      message: 'Hello world!',
-    };
-  }
+  async index(@Query('name') name?: string) {
+    if (name === undefined) {
+      return {
+        drops: await this.rangerService.findAllDrops(),
+      };
+    }
 
-  @Get('/suggest')
-  async suggestWeapon(@Query('name') name: string) {
     return {
-      message: await this.rangerService.searchWeapons(name),
+      name: name,
+      drops: await this.rangerService.findDropByWeaponName(name),
     };
   }
 }

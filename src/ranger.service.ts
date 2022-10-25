@@ -7,40 +7,12 @@ export class RangerService {
   constructor(private prisma: PrismaService) {
   }
 
-  async searchWeapons(name: string) {
-    return (await this.prisma.weapon.findMany({
-      where: {
-        name: {
-          contains: this.normalizeName(name),
-        },
-        category: WeaponCategory.RANGER,
-      },
-    }));
-  }
-
-  async findDropByWeaponId(weaponId: number | null) {
-    if (weaponId === null) {
-      return await this.prisma.drop.findMany({
-        include: {
-          weapon: true,
-        },
-        where: {
-          weapon: {
-            category: WeaponCategory.RANGER,
-          },
-        },
-        orderBy: {
-          mission: 'desc',
-        },
-      });
-    }
-
-    return await this.prisma.drop.findMany({
+  async findAllDrops() {
+    return (await this.prisma.drop.findMany({
       include: {
         weapon: true,
       },
       where: {
-        weaponId,
         weapon: {
           category: WeaponCategory.RANGER,
         },
@@ -48,32 +20,41 @@ export class RangerService {
       orderBy: {
         mission: 'desc',
       },
-    });
+    })).map((e) => ({
+      mission: e.mission,
+      weaponName: `Lv${e.weapon.level} ${e.weapon.name}`,
+      isNew: e.isNew,
+    }));
   }
 
-  async findDropByMission(mission: number | null) {
-    if (mission === null) {
-      return await this.prisma.drop.findMany({
-        include: {
-          weapon: true,
-        },
-        orderBy: {
-          mission: 'desc',
-        },
-      });
-    }
+  async findDropByWeaponName(weaponName: string) {
 
-    return await this.prisma.drop.findMany({
+    const normalizedName = this.normalizeName(weaponName);
+
+
+    if (normalizedName === '') {
+      return await this.findAllDrops();
+    }
+    return (await this.prisma.drop.findMany({
       include: {
         weapon: true,
       },
       where: {
-        mission,
+        weapon: {
+          category: WeaponCategory.RANGER,
+          name: {
+            contains: normalizedName,
+          },
+        },
       },
       orderBy: {
         mission: 'desc',
       },
-    });
+    })).map((e) => ({
+      mission: e.mission,
+      weaponName: `Lv${e.weapon.level} ${e.weapon.name}`,
+      isNew: e.isNew,
+    }));
   }
 
   private normalizeName(name: string) {
@@ -89,6 +70,7 @@ export class RangerService {
     }).replace(/[０-９]/g, (e) => {
       const delta = '０'.charCodeAt(0) - '0'.charCodeAt(0);
       return String.fromCharCode(e.charCodeAt(0) - delta);
-    });
+    }).replace(/　/g, '')
+      .replace(/\s/g, '');
   }
 }

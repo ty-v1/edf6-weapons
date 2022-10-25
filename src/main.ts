@@ -17,7 +17,7 @@ async function bootstrap() {
   const isDev = process.env.NODE_ENV != 'prd';
   app.useStaticAssets(resolveStaticAssetsDir(isDev));
   app.setBaseViewsDir(resolveBaseViewsDir(isDev));
-  app.setViewEngine('hbs');
+  app.setViewEngine('ejs');
 
   await app.listen(3000);
 }

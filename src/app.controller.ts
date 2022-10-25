@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, Render, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Query, Render, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppService } from './app.service';
 import { RangerService } from './ranger.service';
@@ -14,7 +14,8 @@ export class AppController {
   async index(@Req() request: Request, @Query('name') name?: string) {
     return {
       name: name,
-      successMessage: request.flash('success') ?? '',
+      successMessage: request.flash('success') ?? [],
+      errorMessage: request.flash('error') ?? [],
       drops: await this.rangerService.findDropByWeaponName(name ?? ''),
     };
   }
@@ -47,5 +48,25 @@ export class AppController {
     request.flash('error', result);
     res.status(HttpStatus.BAD_REQUEST)
       .redirect('/register');
+  }
+
+  @Post('/delete/:id')
+  async delete(
+    @Param('id') id: string,
+    @Res() res: Response,
+    @Req() request: Request,
+  ) {
+    const result = await this.rangerService.delete(id);
+
+    if (result === true) {
+      request.flash('success', '成功');
+      res.status(HttpStatus.OK)
+        .redirect('/');
+      return;
+    }
+
+    request.flash('error', result);
+    res.status(HttpStatus.BAD_REQUEST)
+      .redirect('/');
   }
 }

@@ -37,6 +37,7 @@ export class RangerService {
       mission: e.mission,
       weaponName: `Lv${e.weapon.level} ${e.weapon.name}`,
       isNew: e.isNew,
+      id: e.id,
     }));
   }
 
@@ -67,6 +68,7 @@ export class RangerService {
       mission: e.mission,
       weaponName: `Lv${e.weapon.level} ${e.weapon.name}`,
       isNew: e.isNew,
+      id: e.id,
     }));
   }
 
@@ -92,6 +94,41 @@ export class RangerService {
       },
     });
 
+    return true;
+  }
+
+  async delete(id: string): Promise<true | string> {
+    const drop = await this.prisma.drop.findUnique({
+      where: {
+        id: parseInt(id, 10),
+      },
+    });
+
+    if (!drop.isNew) {
+      await this.prisma.drop.delete({
+        where: {
+          id: drop.id,
+        },
+      });
+      return true;
+    }
+
+    const updateDrops = await this.prisma.drop.count({
+      where: {
+        weaponId: drop.weaponId,
+        isNew: false,
+      },
+    });
+
+    if (updateDrops > 0) {
+      return 'さきにUpを削除';
+    }
+
+    await this.prisma.drop.delete({
+      where: {
+        id: drop.id,
+      },
+    });
     return true;
   }
 

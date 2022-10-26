@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  db:
+    image: mysql:8.0.31
+    ports:
+      - "13306:3306"
+    environment:
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: edf6
+      TZ: "Asia/Tokyo"
+    volumes:
+      - ./docker/my.cnf:/etc/mysql/conf.d/my.cnf
+      - mysql:/var/lib/mysql
+
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
+    depends_on:
+      - db
+    command: ["./wait-for-it.sh", "db:3306", "--", "node", "./dist/src/main.js"]
+    ports:
+      - "3000:3000"
+
+volumes:
+  mysql:

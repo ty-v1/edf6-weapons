@@ -24,7 +24,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: "mysql://${DB_USER}:${DB_PASSWORD}@db:3306/edf6"
+      DATABASE_URL: "mysql://${DB_USER}:${DB_PASSWORD}@db:3306/edf6connect_timeout=3000"
 
   phpmyadmin:
     image: phpmyadmin

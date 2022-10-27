@@ -5,6 +5,9 @@ COPY ["../../package.json", "./"]
 COPY ["../../yarn.lock",  "./"]
 COPY ../../ .
 
+RUN rm .env
+RUN rm .env.prd
+
 RUN apt update
 RUN apt install -y libc6 openssl wget
 

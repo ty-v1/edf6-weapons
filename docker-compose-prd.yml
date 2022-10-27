@@ -3,6 +3,7 @@ version: "3"
 services:
   db:
     image: mysql:8.0.31
+    restart: always
     ports:
       - "13306:3306"
     environment:
@@ -16,14 +17,25 @@ services:
       - mysql:/var/lib/mysql
 
   app:
-    build:
-      context: .
-      dockerfile: ./docker/app/Dockerfile
+    image: ghcr.io/ty-v1/edf6-weapons/app:v1.0.0
     depends_on:
       - db
-    command: ["./wait-for-it.sh", "db:3306", "--", "node", "./dist/src/main.js"]
+    command: [ "./wait-for-it.sh", "db:3306", "--", "node", "./dist/src/main.js" ]
     ports:
       - "3000:3000"
+    environment:
+      DATABASE_URL: "mysql://${DB_USER}:${DB_PASSWORD}@db:3306/edf6"
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_ROOT_PASSWORD}
 
 volumes:
   mysql:

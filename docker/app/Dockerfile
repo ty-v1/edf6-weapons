@@ -8,11 +8,8 @@ COPY ../../ .
 RUN rm .env
 RUN rm .env.prd
 
-RUN apt update
-RUN apt install -y libc6 openssl wget
-
-RUN wget 'https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh'
-RUN chmod 755 wait-for-it.sh
+RUN apt-get update
+RUN apt-get install -y libc6 openssl
 
 RUN yarn install
 RUN npx prisma generate

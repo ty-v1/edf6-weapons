@@ -1,41 +1,21 @@
 version: "3"
 
 services:
-  db:
-    image: mysql:8.0.31
-    restart: always
-    ports:
-      - "13306:3306"
-    environment:
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: edf6
-      TZ: "Asia/Tokyo"
-    volumes:
-      - ./docker/my.cnf:/etc/mysql/conf.d/my.cnf
-      - mysql:/var/lib/mysql
 
   app:
-    image: ghcr.io/ty-v1/edf6-weapons/app:v1.0.0
-    depends_on:
-      - db
-    command: [ "./wait-for-it.sh", "db:3306", "--", "node", "./dist/src/main.js" ]
+    image: ghcr.io/ty-v1/edf6-weapons/app:v2.0.0
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: "mysql://${DB_USER}:${DB_PASSWORD}@db:3306/edf6?connect_timeout=3000"
+      DATABASE_URL: "file:/db/edf6.db"
+    volumes:
+      - ./db:/db
+    command: node ./dist/src/main.js
 
-  phpmyadmin:
-    image: phpmyadmin
-    restart: always
+  sqliteweb:
+    image: ghcr.io/ty-v1/sqliteweb/sqliteweb:latest
     ports:
-      - "8080:80"
-    environment:
-      PMA_ARBITRARY: 1
-      PMA_HOST: db
-      PMA_USER: root
-      PMA_PASSWORD: ${DB_ROOT_PASSWORD}
-
-volumes:
-  mysql:
+      - "8080:8080"
+    volumes:
+      - ./db:/db
+    command: edf6.db

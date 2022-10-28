@@ -2,27 +2,20 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-enum WeaponCategory {
-  RANGER
-  WING_DIVER
-  AIR_RAIDER
-  FENCER
-}
-
 model Weapon {
-  id       Int            @id @default(autoincrement())
-  name     String         @unique @db.VarChar(256)
+  id       Int    @id @default(autoincrement())
+  name     String @unique
   level    Int
-  category WeaponCategory
+  category String
   Drop     Drop[]
 }
 

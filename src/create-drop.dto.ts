@@ -1,10 +1,9 @@
-import { IsBoolean, IsInt } from 'class-validator';
+import { IsBoolean, IsInt, IsString } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 
 export class CreateDropDto {
-  @Type(() => Number)
-  @IsInt()
-  weaponId: number;
+  @IsString()
+  weaponId: string;
 
   @Type(() => Number)
   @IsInt()

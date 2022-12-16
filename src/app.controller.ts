@@ -1,12 +1,18 @@
 import { Body, Controller, Get, HttpStatus, Param, Post, Query, Render, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppService } from './app.service';
-import { RangerService } from './ranger.service';
 import { CreateDropDto } from './create-drop.dto';
+import { DropService } from './drop.service';
+import { WeaponService } from './weapon.service';
+import { WeaponCategory } from './weapon-category';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService, private readonly rangerService: RangerService) {
+  constructor(
+    private readonly appService: AppService,
+    private readonly dropService: DropService,
+    private readonly weaponService: WeaponService,
+  ) {
   }
 
   @Get()
@@ -16,7 +22,7 @@ export class AppController {
       name: name,
       successMessage: request.flash('success') ?? [],
       errorMessage: request.flash('error') ?? [],
-      drops: await this.rangerService.findDropByWeaponName(name ?? ''),
+      drops: await this.dropService.findDropByName(name ?? '', WeaponCategory.ranger),
     };
   }
 
@@ -25,7 +31,7 @@ export class AppController {
   async management(@Req() request: Request) {
     return {
       errorMessage: request.flash('error') ?? [],
-      weapons: await this.rangerService.findAllWeapons(),
+      weapons: await this.weaponService.findAllWeapons(WeaponCategory.ranger),
     };
   }
 
@@ -36,7 +42,7 @@ export class AppController {
     @Res() res: Response,
   ) {
 
-    const result = await this.rangerService.register(dto);
+    const result = await this.dropService.register(dto);
 
     if (result === true) {
       request.flash('success', '成功');
@@ -50,13 +56,14 @@ export class AppController {
       .redirect('/register');
   }
 
-  @Post('/delete/:id')
+  @Post('/delete/:id/:mission')
   async delete(
     @Param('id') id: string,
+    @Param('mission') mission: string,
     @Res() res: Response,
     @Req() request: Request,
   ) {
-    const result = await this.rangerService.delete(id);
+    const result = await this.dropService.delete(id, parseInt(mission));
 
     if (result === true) {
       request.flash('success', '成功');

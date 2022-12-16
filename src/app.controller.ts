@@ -1,10 +1,25 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Query, Render, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+  Render,
+  Req,
+  Res,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppService } from './app.service';
 import { CreateDropDto } from './create-drop.dto';
 import { DropService } from './drop.service';
 import { WeaponService } from './weapon.service';
 import { WeaponCategory } from './weapon-category';
+import { BasicAuthGuard } from './basic-auth.guard';
+import { AuthExceptionFilter } from './auth-exception.filter';
 
 @Controller()
 export class AppController {
@@ -17,6 +32,8 @@ export class AppController {
 
   @Get()
   @Render('index')
+  @UseFilters(new AuthExceptionFilter())
+  @UseGuards(BasicAuthGuard)
   async index(@Req() request: Request, @Query('name') name?: string) {
     return {
       name: name,
@@ -28,6 +45,8 @@ export class AppController {
 
   @Get('/register')
   @Render('register')
+  @UseGuards(BasicAuthGuard)
+  @UseFilters(new AuthExceptionFilter())
   async management(@Req() request: Request) {
     return {
       errorMessage: request.flash('error') ?? [],
@@ -36,6 +55,8 @@ export class AppController {
   }
 
   @Post('/register')
+  @UseGuards(BasicAuthGuard)
+  @UseFilters(new AuthExceptionFilter())
   async register(
     @Body() dto: CreateDropDto,
     @Req() request: Request,
@@ -57,6 +78,8 @@ export class AppController {
   }
 
   @Post('/delete/:id/:mission')
+  @UseGuards(BasicAuthGuard)
+  @UseFilters(new AuthExceptionFilter())
   async delete(
     @Param('id') id: string,
     @Param('mission') mission: string,

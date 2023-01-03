@@ -84,7 +84,7 @@ export class DropService {
       return `一度もドロップしていない`;
     }
 
-    if (!dto.isNew && oldestDrop.mission <= dto.mission) {
+    if (!dto.isNew && oldestDrop.mission > dto.mission) {
       return `M${oldestDrop.mission}でドロップ済み`;
     }
 

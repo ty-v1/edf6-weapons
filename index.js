@@ -12,4 +12,5 @@ app.use(async (req, res) => {
   return nest(req, res);
 });
 
-module.exports = app;
+const port = parseInt(process.env.PORT) || 8080;
+app.listen(port, () => console.log(`listening on port ${port}.`));

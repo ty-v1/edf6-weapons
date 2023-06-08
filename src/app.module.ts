@@ -4,13 +4,11 @@ import { AppService } from './app.service';
 import { DropService } from './drop.service';
 import { WeaponService } from './weapon.service';
 import { ConfigModule } from '@nestjs/config';
-import { BasicStrategy } from './basic.strategy';
-import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [ConfigModule.forRoot(), PassportModule],
+  imports: [ConfigModule.forRoot()],
   controllers: [AppController],
-  providers: [AppService, DropService, WeaponService, BasicStrategy],
+  providers: [AppService, DropService, WeaponService],
 })
 export class AppModule {
 }

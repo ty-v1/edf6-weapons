@@ -39,9 +39,6 @@ dist/
 # Flycheck
 flycheck_*.el
 
-# server auth directory
-/server/
-
 # projectiles files
 .projectile
 
@@ -364,3 +361,7 @@ $RECYCLE.BIN/
 db/
 
 .space
+
+#
+public/build/
+build/

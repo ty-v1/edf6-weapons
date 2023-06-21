@@ -1,16 +1,49 @@
 version: "3"
 
 services:
-  db:
-    image: mysql:8.0.31
-    ports:
-      - "13306:3306"
-
+  localstack:
+    image: localstack/localstack:latest
+    container_name: edf6-weapon-dynamodb
     environment:
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
-      TZ: "Asia/Tokyo"
+      SERVICES: dynamodb
+      INIT_SCRIPTS_PATH: /docker-entrypoint-initaws.d
+      DEFAULT_REGION: 'ap-northeast-1'
+    ports:
+      - "4545:4566"
     volumes:
-      - ./docker/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/init:/docker-entrypoint-initaws.d
+      - localstack-volume:/var/lib/localstack
+
+  s3:
+    image: "minio/minio:latest"
+    container_name: edf6-weapon-s3
+    environment:
+      MINIO_ROOT_USER: minio
+      MINIO_ROOT_PASSWORD: password
+    entrypoint: bash
+    command: -c "/opt/bin/minio server /export --console-address :9001"
+    volumes:
+      - s3-volume:/export
+    ports:
+      - "3090:9000"
+      - "3091:9001"
+
+  mc:
+    image: minio/mc:latest
+    container_name: edf6-mc
+    depends_on:
+      - s3
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc config host rm local;
+      /usr/bin/mc config host add --quiet --api s3v4 local http://s3:9000 minio password;
+      /usr/bin/mc rb --force local/edf6/;
+      /usr/bin/mc mb --quiet local/edf6/;
+      /usr/bin/mc policy set public local/edf6;
+      "
+
+volumes:
+  localstack-volume:
+    driver: local
+  s3-volume:
+    driver: local

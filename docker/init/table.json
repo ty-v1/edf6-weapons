@@ -1,0 +1,74 @@
+{
+  "TableName": "drop",
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "pk",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "sk",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "keys_gsi",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "keys_gsi_sk",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "gsi_prj",
+      "AttributeType": "S"
+    }
+  ],
+  "KeySchema": [
+    {
+      "AttributeName": "pk",
+      "KeyType": "HASH"
+    },
+    {
+      "AttributeName": "sk",
+      "KeyType": "RANGE"
+    }
+  ],
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "keys_gsi",
+      "KeySchema": [
+        {
+          "AttributeName": "keys_gsi",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "keys_gsi_sk",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "INCLUDE",
+        "NonKeyAttributes": [
+          "pk",
+          "sk",
+          "gsi_prj"
+        ]
+      }
+    },
+    {
+      "IndexName": "gsi_prj",
+      "KeySchema": [
+        {
+          "AttributeName": "gsi_prj",
+          "KeyType": "HASH"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "INCLUDE",
+        "NonKeyAttributes": [
+          "prj"
+        ]
+      }
+    }
+  ],
+  "BillingMode": "PAY_PER_REQUEST"
+}

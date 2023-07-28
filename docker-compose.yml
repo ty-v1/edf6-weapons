@@ -5,13 +5,12 @@ services:
     image: localstack/localstack:latest
     container_name: edf6-weapon-dynamodb
     environment:
-      SERVICES: dynamodb
-      INIT_SCRIPTS_PATH: /docker-entrypoint-initaws.d
-      DEFAULT_REGION: 'ap-northeast-1'
+      DEBUG: 1
     ports:
       - "4545:4566"
     volumes:
-      - ./docker/init:/docker-entrypoint-initaws.d
+      - ./docker/localstack/create-table.sh:/etc/localstack/init/ready.d/create-table.sh
+      - ./docker/localstack/schema:/schema
       - localstack-volume:/var/lib/localstack
 
   s3:

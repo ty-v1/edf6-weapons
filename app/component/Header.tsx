@@ -6,8 +6,8 @@ export default function Header() {
       <Container>
         <Toolbar>
           <Button sx={{ color: 'white' }} href='/'>ドロップ一覧</Button>
-          <Button sx={{ color: 'white' }} href='/ranger/register'>レンジャードロップ登録</Button>
-          <Button sx={{ color: 'white' }} href='/air-raider/register'>エアレイダードロップ登録</Button>
+          <Button sx={{ color: 'white' }} href='/drop/register/ranger'>レンジャードロップ登録</Button>
+          <Button sx={{ color: 'white' }} href='/drop/register/air-raider'>エアレイダードロップ登録</Button>
         </Toolbar>
       </Container>
     </AppBar>

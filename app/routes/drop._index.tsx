@@ -1,6 +1,6 @@
 import { ActionArgs, json, LoaderArgs, redirect } from '@remix-run/node';
 import { Form, useActionData, useLoaderData, useSearchParams } from '@remix-run/react';
-import { isNil, keyBy } from 'lodash';
+import { isNil, keyBy, sortBy } from 'lodash';
 import { Drop } from '~/server/drop/Drop';
 import { Weapon } from '~/server/weapon/Weapon';
 import { searchWeapon } from '~/server/weapon/searchWeapon';
@@ -39,13 +39,14 @@ const createResponse: (drops: ReadonlyArray<Drop>, weapons: ReadonlyArray<Weapon
 ) => {
   const idToWeapon = keyBy(weapons, 'id');
 
-  return drops.map((e) => ({
+  const responses = drops.map((e) => ({
     id: e.weaponId,
     isNew: e.isNew,
     mission: e.mission,
     level: idToWeapon[e.weaponId]?.level ?? 0,
     name: idToWeapon[e.weaponId].name ?? '',
   }));
+  return sortBy(responses, 'mission', 'level', 'name');
 };
 
 export async function action({ request, params }: ActionArgs) {

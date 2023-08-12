@@ -157,7 +157,7 @@ const DropRegisterPage = () => {
           </Select>
         </FormControl>
 
-        <FormControlLabel control={<Checkbox defaultChecked name="isNew"/>}
+        <FormControlLabel control={<Checkbox name="isNew"/>}
                           label="新規ドロップ"/>
 
         <Button type="submit"

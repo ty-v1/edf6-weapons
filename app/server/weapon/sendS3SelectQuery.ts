@@ -14,7 +14,7 @@ export const sendS3SelectQuery = async (query: string) => {
     InputSerialization: {
       CSV: {
         FileHeaderInfo: 'USE',
-        RecordDelimiter: '\n',
+        RecordDelimiter: '\r\n',
         FieldDelimiter: ',',
       },
     },

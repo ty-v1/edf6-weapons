@@ -6,9 +6,9 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "./node_modules/.bin/remix build",
+    "build": "remix build",
     "dev": "remix dev",
-    "start": "./node_modules/.bin/remix-serve build"
+    "start": "remix-serve build"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.354.0",

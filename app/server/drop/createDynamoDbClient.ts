@@ -12,7 +12,7 @@ export const dynamoDbClient = (() => {
     });
   } else {
     return new DynamoDBClient({
-      region: 'ap-northeast-1',
+      region: 'us-west-1',
     });
   }
 })();

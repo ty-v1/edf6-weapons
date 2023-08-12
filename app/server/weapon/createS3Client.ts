@@ -13,7 +13,7 @@ export const s3Client = (() => {
     });
   } else {
     return new S3Client({
-      region: 'ap-northeast-1',
+      region: 'us-west-1',
     });
   }
 })();

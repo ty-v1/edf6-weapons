@@ -2,7 +2,12 @@ import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from '@re
 import { withEmotionCache } from '@emotion/react';
 import { ReactNode, useContext } from 'react';
 import ClientStyleContext from '~/component/context/ClientStyleContext';
-import { createTheme, unstable_useEnhancedEffect as useEnhancedEffect } from '@mui/material';
+import {
+  createTheme,
+  CssBaseline,
+  ThemeProvider,
+  unstable_useEnhancedEffect as useEnhancedEffect
+} from '@mui/material';
 import Layout from '~/component/Layout';
 
 interface DocumentProps {
@@ -10,7 +15,11 @@ interface DocumentProps {
   readonly title?: string;
 }
 
-const theme = createTheme();
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
 
 const Document = withEmotionCache(({ children, title }: DocumentProps, emotionCache) => {
   const clientStyleData = useContext(ClientStyleContext);
@@ -32,25 +41,25 @@ const Document = withEmotionCache(({ children, title }: DocumentProps, emotionCa
   }, []);
 
   return (
-    <html lang='en'>
+    <html lang="en">
     <head>
-      <meta charSet='utf-8' />
-      <meta name='viewport' content='width=device-width,initial-scale=1' />
-      <meta name='theme-color' content={theme.palette.primary.main} />
+      <meta charSet="utf-8"/>
+      <meta name="viewport" content="width=device-width,initial-scale=1"/>
+      <meta name="theme-color" content={theme.palette.primary.main}/>
       {title ? <title>{title}</title> : null}
-      <Meta />
-      <Links />
+      <Meta/>
+      <Links/>
       <link
-        rel='stylesheet'
-        href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
       />
-      <meta name='emotion-insertion-point' content='emotion-insertion-point' />
+      <meta name="emotion-insertion-point" content="emotion-insertion-point"/>
     </head>
     <body>
     {children}
-    <ScrollRestoration />
-    <Scripts />
-    <LiveReload />
+    <ScrollRestoration/>
+    <Scripts/>
+    <LiveReload/>
     </body>
     </html>
   );
@@ -59,9 +68,12 @@ const Document = withEmotionCache(({ children, title }: DocumentProps, emotionCa
 export default function App() {
   return (
     <Document>
-      <Layout>
-        <Outlet />
-      </Layout>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Layout>
+          <Outlet/>
+        </Layout>
+      </ThemeProvider>
     </Document>
   );
 }

@@ -10,8 +10,10 @@ import React from 'react';
 import {
   Alert,
   Box,
+  Icon,
   IconButton,
-  Paper, Snackbar,
+  Paper,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -21,7 +23,6 @@ import {
 } from '@mui/material';
 import { formatMission } from '~/util/formatMission';
 import { DropLabel } from '~/component/DropLabel';
-import { Delete } from '@mui/icons-material';
 import { deleteDrop } from '~/server/drop/deleteDrop';
 
 type DropResponse = {
@@ -126,10 +127,9 @@ export const DropListPage = () => {
                   <Form method="post">
                     <input type="hidden" name="weaponId" value={row.id}/>
                     <input type="hidden" name="mission" value={row.mission}/>
-                    <IconButton color="error" type="submit">
-                      <Delete/>
+                    <IconButton type="submit">
+                      <Icon color="error">delete_forever</Icon>
                     </IconButton>
-
                   </Form>
                 </TableCell>
               </TableRow>

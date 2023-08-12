@@ -21,14 +21,16 @@ export const addDrop = async ({ weaponId, mission, isNew, category }: Args) => {
     throw new Error('1回もドロップしていない');
   }
 
-  const oldestMission = minBy(drops, 'mission').mission;
 
   if (isNew && !isEmpty(drops)) {
     throw new Error('ドロップ済み');
   }
 
-  if (!isNew && mission < oldestMission) {
-    throw new Error(`最初のドロップは${formatMission(oldestMission)}`);
+  if (!isNew) {
+    const oldestMission = minBy(drops, 'mission').mission;
+    if (mission < oldestMission) {
+      throw new Error(`最初のドロップは${formatMission(oldestMission)}`);
+    }
   }
 
   if (drops.some((e) => e.mission === mission)) {

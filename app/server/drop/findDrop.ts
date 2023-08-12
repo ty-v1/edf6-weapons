@@ -9,7 +9,6 @@ export const findDrop: (weaponId: string) => Promise<ReadonlyArray<Drop>> = asyn
   const { Items } = await dynamoDbClient.send(new QueryCommand({
     TableName: process.env.CYCLIC_DB,
     Select: 'ALL_ATTRIBUTES',
-    IndexName: 'primary',
     KeyConditionExpression: 'pk = :weaponId',
     ExpressionAttributeValues: {
       ':weaponId': { S: weaponId },

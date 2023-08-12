@@ -1,5 +1,5 @@
 import { ActionArgs, json, LoaderArgs, redirect } from '@remix-run/node';
-import { Form, useActionData, useLoaderData } from '@remix-run/react';
+import { Form, useActionData, useLoaderData, useSearchParams } from '@remix-run/react';
 import { isNil, keyBy } from 'lodash';
 import { Drop } from '~/server/drop/Drop';
 import { Weapon } from '~/server/weapon/Weapon';
@@ -9,21 +9,22 @@ import { findDrop } from '~/server/drop/findDrop';
 import React from 'react';
 import {
   Alert,
-  Box,
+  Box, Button, FormControl, FormControlLabel, FormLabel,
   Icon,
   IconButton,
-  Paper,
-  Snackbar,
+  Paper, Radio, RadioGroup,
+  Snackbar, Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow, TextField
 } from '@mui/material';
 import { formatMission } from '~/util/formatMission';
 import { DropLabel } from '~/component/DropLabel';
 import { deleteDrop } from '~/server/drop/deleteDrop';
+import Grid2 from '@mui/material/Unstable_Grid2';
 
 type DropResponse = {
   readonly id: string;
@@ -67,11 +68,12 @@ export async function action({ request, params }: ActionArgs) {
   return redirect('/drop');
 }
 
-export const loader = async ({ params }: LoaderArgs) => {
-  const category = (params.category ?? 'RANGER') as WeaponCategory;
-  const name = params.name ?? '';
+export const loader = async ({ request }: LoaderArgs) => {
+  const url = new URL(request.url);
+  const category = url.searchParams.get('category') ?? 'RANGER';
+  const name = url.searchParams.get('name') ?? '';
 
-  const weapons = await searchWeapon(name, category);
+  const weapons = await searchWeapon(name, category as WeaponCategory);
   const drops = (await Promise.all(
     weapons.map(e => e.id)
       .map(e => findDrop(e)),
@@ -85,7 +87,7 @@ export const loader = async ({ params }: LoaderArgs) => {
 export const DropListPage = () => {
   const { drops } = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
-
+  const [params] = useSearchParams();
   return (
     <>
       {
@@ -101,6 +103,41 @@ export const DropListPage = () => {
           </Alert>
         </Snackbar>
       }
+
+      <Form>
+        <Grid2 container alignItems="center" spacing={2} sx={{ mb: 3 }}>
+          <Grid2 xs={12}>
+            <FormControl>
+              <FormLabel id="category-label">兵科</FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="category-label"
+                defaultValue={params.get('category') ?? 'RANGER'}
+                name="category">
+                <FormControlLabel value="RANGER" control={<Radio/>} label="レンジャー"/>
+                <FormControlLabel value="AIR_RAIDER" control={<Radio/>} label="エアレイダー"/>
+              </RadioGroup>
+            </FormControl>
+          </Grid2>
+
+          <Grid2 xs={8}>
+            <TextField name="name"
+                       label="武器名"
+                       defaultValue={params.get('name') ?? ''}
+                       placeholder="ライサンダーZ"
+                       InputLabelProps={{
+                         shrink: true,
+                       }}
+                       variant="standard"
+                       fullWidth/>
+          </Grid2>
+          <Grid2 xs={2}>
+            <Button type="submit" variant="outlined">検索</Button>
+          </Grid2>
+
+        </Grid2>
+
+      </Form>
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">

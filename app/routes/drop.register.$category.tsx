@@ -15,7 +15,7 @@ import {
   TextField
 } from '@mui/material';
 import { isEmpty, isNil, isString, range } from 'lodash';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { formatMission } from '~/util/formatMission';
 import { addDrop } from '~/server/drop/addDrop';
 import { Params } from '@remix-run/router';
@@ -81,13 +81,19 @@ const DropRegisterPage = () => {
   const { weapons } = useLoaderData<typeof loader>();
   const [selectedWeapon, setSelectedWeapon] = useState(weapons[0]);
   const actionData = useActionData<typeof action>();
+  const [open, setOpen] = useState(true);
+
+  useEffect(() => {
+    setOpen(true);
+  }, [actionData]);
 
   return (
     <>
       {
         !isNil(actionData?.message) &&
-        <Snackbar open
-                  autoHideDuration={6000}
+        <Snackbar open={open}
+                  onClose={() => setOpen(false)}
+                  autoHideDuration={4000}
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
           <Alert severity={actionData?.isError ? 'error' : 'success'}
                  color={actionData?.isError ? 'error' : 'success'}
